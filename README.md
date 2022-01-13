@@ -23,7 +23,8 @@ This project is an API that provide all the functionalities needed for an online
     2. Completed Orders by user (args: user id)[token required]
 
 ### ERD
-![ERD](./erd.png)
+![ERD](https://github.com/AhmedMohammed3/store-front-backend/blob/master/erd.PNG)
+
 ## Table of Contents
 
 - [Store Front API](#store-front-api)
