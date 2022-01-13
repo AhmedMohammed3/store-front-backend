@@ -4,38 +4,32 @@ import client from '../database';
 export type Order = {
     id?: number;
     userId: number;
-    orderStatus: string;
+    orderStatus?: string;
 };
 
 export class OrderStore {
-    // get active order by user id
-    async getCurrentOrder(userId: number): Promise<Order> {
+    async createOrder(userId: number): Promise<Order> {
         try {
             const conn = await client.connect();
             const sql =
-                'SELECT * FROM orders WHERE user_id = $1 AND order_status = $2';
+                'INSERT INTO orders (user_id, order_status) VALUES ($1, $2) RETURNING *';
             const result: QueryResult<Order> = await conn.query(sql, [
                 userId,
                 'active',
             ]);
             return result.rows[0];
         } catch (err) {
-            throw new Error(`Can not get active order: ${err}`);
+            throw new Error(`Can not create order: ${err}`);
         }
     }
-    // get completed order by user id
-    async getCompletedOrder(userId: number): Promise<Order> {
+    async markAsCompleted(orderId: number): Promise<void> {
         try {
             const conn = await client.connect();
             const sql =
-                'SELECT * FROM orders WHERE user_id = $1 AND order_status = $2';
-            const result: QueryResult<Order> = await conn.query(sql, [
-                userId,
-                'complete',
-            ]);
-            return result.rows[0];
+                'UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *';
+            await conn.query(sql, ['completed', orderId]);
         } catch (err) {
-            throw new Error(`Can not get completed order: ${err}`);
+            throw new Error(`Can not mark order as completed: ${err}`);
         }
     }
 }

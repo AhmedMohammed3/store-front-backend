@@ -44,13 +44,14 @@ export class ProductStore {
             throw new Error(`Can not create product: ${err}`);
         }
     }
-    // get products by category
+    // get products by category with like
     async getProductsByCategory(category: string): Promise<Product[]> {
         try {
             const conn = await client.connect();
-            const sql = 'SELECT * FROM products WHERE category = $1';
+
+            const sql = 'SELECT * FROM products WHERE category LIKE $1';
             const result: QueryResult<Product> = await conn.query(sql, [
-                category,
+                `%${category}%`,
             ]);
             return result.rows;
         } catch (err) {

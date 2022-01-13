@@ -4,8 +4,8 @@ import client from '../database';
 
 export type User = {
     id?: number;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     pass: string;
 };
 
@@ -34,11 +34,14 @@ export class UserStore {
         try {
             const conn = await client.connect();
             const sql =
-                'INSERT INTO users (first_name, last_name, pass) VALUES ($1, $2, $3) RETURNING *';
+                'INSERT INTO users (firstname, lastname, password) VALUES ($1, $2, $3) RETURNING *';
             const result: QueryResult<User> = await conn.query(sql, [
-                user.firstName,
-                user.lastName,
-                bcrypt.hashSync(user.pass, 10),
+                user.firstname,
+                user.lastname,
+                bcrypt.hashSync(
+                    user.pass + process.env.BCRYPT_PEPPER,
+                    Number(process.env.BCRYPT_SALT),
+                ),
             ]);
             return result.rows[0];
         } catch (err) {

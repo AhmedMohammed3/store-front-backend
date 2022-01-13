@@ -23,6 +23,7 @@ This project is an API that provide all the functionalities needed for an online
     2. Completed Orders by user (args: user id)[token required]
 
 ### ERD
+
 ![ERD](https://github.com/AhmedMohammed3/store-front-backend/blob/master/erd.PNG)
 
 ## Table of Contents
@@ -53,8 +54,8 @@ This project is an API that provide all the functionalities needed for an online
     5. `DB_NAME=store_front`
     6. `DB_TEST_NAME=store_front_test`
     7. `JWT_SECRET`
-    8. `JWT_PEPPER`
-    9. `JWT_EXPIRES_IN`
+    8. `BCRYPT_PEPPER`
+    9. `BCRYPT_SALT`
 3. Run the following set of commands to create a database called `store_front`<br/>
 
     1. `psql -U {POSTGRES_USER}`
