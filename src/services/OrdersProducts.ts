@@ -1,11 +1,5 @@
 import client from '../database';
 
-export type OrdersProducts = {
-    id?: number;
-    orderId: number;
-    products: { productId: number; quantity: number }[];
-};
-
 export type OrderWithProducts = {
     orderId: number;
     userId?: number;
