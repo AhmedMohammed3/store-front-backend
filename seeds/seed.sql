@@ -37,7 +37,7 @@ INSERT INTO users(firstname,lastname,password) VALUES
     ('Jane', 'Doe', '$2b$10$jMUmsJvLQKDMDnhe0smb9OeXq73T334v5YHXlluBMG4Qgu9E3R5O2');
 
 -- seed orders table
-INSERT INTO orders (user_id, status) VALUES
+INSERT INTO orders (user_id, order_status) VALUES
     (1, 'completed'),
     (1, 'completed'),
     (2, 'active'),
