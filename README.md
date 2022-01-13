@@ -22,11 +22,14 @@ This project is an API that provide all the functionalities needed for an online
     1. Current Order by user (args: user id)[token required]
     2. Completed Orders by user (args: user id)[token required]
 
+### ERD
+![ERD](./erd.png)
 ## Table of Contents
 
 - [Store Front API](#store-front-api)
   - [Description](#description)
     - [API Endpoints](#api-endpoints)
+    - [ERD](#erd)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
   - [How To Run The Server](#how-to-run-the-server)
