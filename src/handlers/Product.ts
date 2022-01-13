@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express';
 
+import { OrdersProductsStore } from './../services/OrdersProducts';
 import { Product, ProductStore } from '../models/Product';
 import { verifyToken } from '../middlewares/token';
 
 const store = new ProductStore();
+const ordersProductsStore = new OrdersProductsStore();
 
 const index = async (_req: Request, res: Response) => {
     try {
@@ -11,7 +13,7 @@ const index = async (_req: Request, res: Response) => {
         res.status(200).json({ products });
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:'Server Error'});
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 
@@ -22,7 +24,7 @@ const showProduct = async (req: Request, res: Response) => {
         res.status(200).json({ product });
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:'Server Error'});
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 
@@ -34,18 +36,23 @@ const createProduct = async (req: Request, res: Response) => {
         res.status(201).json({ newProduct });
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:'Server Error'});
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 
 const getFeaturedProducts = async (_req: Request, res: Response) => {
     try {
         // Get top 5 most popular products
-        const products: Product[] = []; //TODO: get top 5 most popular products
+        console.log('0');
+        const products: {
+            productId: number;
+            productName: string;
+            productPrice: number;
+        }[] = await ordersProductsStore.getFeaturedProducts();
         res.status(200).json({ products });
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:'Server Error'});
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 
@@ -56,19 +63,19 @@ const getProductsByCategory = async (req: Request, res: Response) => {
         res.status(200).json({ products });
     } catch (err) {
         console.log(err);
-        res.status(500).json({error:'Server Error'});
+        res.status(500).json({ error: 'Server Error' });
     }
 };
 
 const product_routes = (app: express.Application): void => {
     // GET /products
     app.get('/products', index);
+    // GET /products/featured
+    app.get('/products/featured', getFeaturedProducts);
     // GET /products/:productId
     app.get('/products/:productId', showProduct);
     // POST /products/
     app.post('/products', verifyToken, createProduct);
-    // GET /products/featured
-    app.get('/products/featured', getFeaturedProducts);
     // GET /products/category/:category
     app.get('/products/category/:category', getProductsByCategory);
 };

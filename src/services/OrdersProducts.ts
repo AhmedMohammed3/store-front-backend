@@ -37,7 +37,6 @@ export class OrdersProductsStore {
             throw new Error(`Can not create order: ${err}`);
         }
     }
-
     async getOrders(
         userId: number,
         activeOrders: boolean,
@@ -90,5 +89,27 @@ export class OrdersProductsStore {
     async getCompletedOrders(userId: number): Promise<OrderWithProducts[]> {
         const orders: OrderWithProducts[] = await this.getOrders(userId, false);
         return orders;
+    }
+    // get all products that appears in any order with count
+    async getFeaturedProducts(): Promise<
+        {
+            productId: number;
+            productName: string;
+            productPrice: number;
+        }[]
+    > {
+        try {
+            const conn = await client.connect();
+            const sql =
+                'SELECT products.id as productId, products.name as productName, products.price as productPrice, SUM(orders_products.quantity) as productCount FROM orders_products INNER JOIN products ON products.id = orders_products.product_id GROUP BY products.id ORDER BY productCount DESC LIMIT 5';
+            const result = await conn.query(sql);
+            return result.rows.map((row) => ({
+                productId: row.productid,
+                productName: row.productname,
+                productPrice: row.productprice,
+            }));
+        } catch (err) {
+            throw new Error(`Can not get products with count: ${err}`);
+        }
     }
 }
