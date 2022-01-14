@@ -8,7 +8,7 @@
         "dev": "tsc && node dist/server.js",
         "watch": "tsc-watch --esModuleInterop src/server.ts --outDir ./dist --onSuccess 'node ./dist/server.js'",
         "build": "tsc",
-        "test": "tsc && jasmine",
+        "test": "ENV=test db-migrate --env test up && jasmine && db-migrate db:drop test",
         "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
         "lint": "eslint src/**/*.ts",
         "format": "eslint src/**/*.ts --fix",

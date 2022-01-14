@@ -11,7 +11,7 @@ const getCurrentOrder = async (req: Request, res: Response) => {
         const order: OrderWithProducts = await store.getCurrentOrder(userId);
         res.status(200).json({ order });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -24,7 +24,7 @@ const getCompletedOrders = async (req: Request, res: Response) => {
         );
         res.status(200).json({ orders });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };

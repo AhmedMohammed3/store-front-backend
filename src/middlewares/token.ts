@@ -12,9 +12,6 @@ export const verifyToken = (
         const secret: string = process.env.JWT_SECRET as string;
         jwt.verify(token, secret, (err) => {
             if (err) {
-                console.log(token);
-                console.log(authorizationHeader);
-                console.log(err);
                 res.status(401).json({
                     message:
                         'You are not authorized to access this resource.(Invalid Token)',

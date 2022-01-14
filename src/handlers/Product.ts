@@ -12,7 +12,7 @@ const index = async (_req: Request, res: Response) => {
         const products: Product[] = await store.index();
         res.status(200).json({ products });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -23,7 +23,7 @@ const showProduct = async (req: Request, res: Response) => {
         const product: Product = await store.showProduct(id);
         res.status(200).json({ product });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -35,7 +35,7 @@ const createProduct = async (req: Request, res: Response) => {
         const newProduct: Product = await store.createProduct(product);
         res.status(201).json({ newProduct });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -43,7 +43,6 @@ const createProduct = async (req: Request, res: Response) => {
 const getFeaturedProducts = async (_req: Request, res: Response) => {
     try {
         // Get top 5 most popular products
-        console.log('0');
         const products: {
             productId: number;
             productName: string;
@@ -51,7 +50,7 @@ const getFeaturedProducts = async (_req: Request, res: Response) => {
         }[] = await ordersProductsStore.getFeaturedProducts();
         res.status(200).json({ products });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -62,7 +61,7 @@ const getProductsByCategory = async (req: Request, res: Response) => {
         const products: Product[] = await store.getProductsByCategory(category);
         res.status(200).json({ products });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };

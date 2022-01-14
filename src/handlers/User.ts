@@ -9,7 +9,6 @@ const store = new UserStore();
 const index = async (_req: Request, res: Response) => {
     try {
         const users: User[] = await store.index();
-        console.log(users);
         res.status(200).json({
             users: users.map((user) => ({
                 id: user.id,
@@ -18,7 +17,7 @@ const index = async (_req: Request, res: Response) => {
             })),
         });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -35,7 +34,7 @@ const showUser = async (req: Request, res: Response) => {
             },
         });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -58,7 +57,7 @@ const createUser = async (req: Request, res: Response) => {
             token,
         });
     } catch (err) {
-        console.log(err);
+        
         res.status(500).json({ error: 'Server Error' });
     }
 };

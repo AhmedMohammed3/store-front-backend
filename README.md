@@ -8,19 +8,21 @@ This project is an API that provide all the functionalities needed for an online
 
 1. Products
 
-    1. Index
-    2. Show
-    3. Create [token required]
-    4. Top 5 most popular products
-    5. Products by category (args: product category)
+    1. Index <b>(GET /products)</b>
+    2. Show <b>(GET /products/:id)</b>
+    3. Create [token required] <b>(POST /products)</b>
+    4. Top 5 most popular products <b>(GET /products/featured)</b>
+    5. Products by category (args: product category) <b>(GET /products/category/:category)</b>
 
 1. Users
-    1. Index [token required]
-    2. Show [token required]
-    3. Create N[token required]
+    1. Index [token required] <b>(GET /users)</b>
+    2. Show [token required] <b>(GET /users/:id)</b>
+    3. Create N[token required] <b>(POST /users)</b>
 1. Orders
-    1. Current Order by user (args: user id)[token required]
-    2. Completed Orders by user (args: user id)[token required]
+    1. Create Order <b>(POST /orders)</b>
+    2. Close Order <b>(PUT /orders/:orderId/close)</b>
+    3. Current Order by user (args: user id)[token required] <b>(GET /orders/current/:userId)</b>
+    4. Completed Orders by user (args: user id)[token required]<b>(GET /orders/completed/:userId)</b>
 
 ### ERD
 
@@ -34,6 +36,7 @@ This project is an API that provide all the functionalities needed for an online
     - [ERD](#erd)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
+    - [NOTES](#notes)
   - [How To Run The Server](#how-to-run-the-server)
   - [Contribute](#contribute)
     - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
@@ -47,6 +50,7 @@ This project is an API that provide all the functionalities needed for an online
     3. `npm i`
 
 2. Create a file called .env with the following keys and fill it with your own data:<br/>
+
     1. `PORT`
     2. `DB_HOST`
     3. `DB_USER`
@@ -56,6 +60,7 @@ This project is an API that provide all the functionalities needed for an online
     7. `JWT_SECRET`
     8. `BCRYPT_PEPPER`
     9. `BCRYPT_SALT`
+
 3. Run the following set of commands to create a database called `store_front`<br/>
 
     1. `psql -U {POSTGRES_USER}`
@@ -68,6 +73,8 @@ This project is an API that provide all the functionalities needed for an online
 5. Run the following command to seed the database:<br/>
     1. `psql -U {POSTGRES_USER} -d store_front -a -f ./seeds/seed.sql`
 
+### NOTES
+NOTE That DB is running on the default port 5432 so you don't need to add it to the .env file.
 ## How To Run The Server
 
 1. Run the following command to start the server:<br/>

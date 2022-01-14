@@ -14,7 +14,6 @@ const createOrder = async (req: Request, res: Response) => {
         await ordersProductsStore.createOrder(Number(newOrder.id), products);
         res.status(201).json({ newOrder });
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -25,7 +24,6 @@ const closeOrder = async (req: Request, res: Response) => {
         await orderStore.markAsCompleted(Number(orderId));
         res.status(200).json({ message: 'Order closed' });
     } catch (err) {
-        console.log(err);
         res.status(500).json({ error: 'Server Error' });
     }
 };
@@ -34,7 +32,7 @@ const orders_routes = (app: express.Application): void => {
     // POST /orders
     app.post('/orders', verifyToken, createOrder);
     // PUT /orders/close
-    app.put('/orders/close/:orderId', verifyToken, closeOrder);
+    app.put('/orders/:orderId/close', verifyToken, closeOrder);
 };
 
 export default orders_routes;

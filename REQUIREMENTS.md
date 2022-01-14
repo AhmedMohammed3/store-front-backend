@@ -26,7 +26,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 -   Completed Orders by user (args: user id)[token required]
 
 ## Data Shapes
-
+![ERD](https://github.com/AhmedMohammed3/store-front-backend/blob/master/erd.PNG)
 #### Product
 
 -   id
