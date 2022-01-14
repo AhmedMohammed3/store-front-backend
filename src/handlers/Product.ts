@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { OrdersProductsStore } from './../services/OrdersProducts';
+import { OrdersProductsStore } from '../services/OrdersProducts';
 import { Product, ProductStore } from '../models/Product';
 import { verifyToken } from '../middlewares/token';
 

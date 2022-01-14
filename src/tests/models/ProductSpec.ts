@@ -1,4 +1,5 @@
 import { Product, ProductStore } from '../../models/Product';
+import client from '../../database';
 
 describe('ProductStore', () => {
     // test index method
@@ -10,8 +11,14 @@ describe('ProductStore', () => {
     // test showProduct method
     it('should return a product', async () => {
         const store = new ProductStore();
-        const product: Product = await store.showProduct(1);
+        let product: Product = await store.createProduct({
+            name: 'test',
+            price: 1,
+            category: 'test',
+        });
+        product = await store.showProduct(Number(product.id));
         expect(product).toBeInstanceOf(Object);
+        client.query(`DELETE FROM products`);
     });
     // test createProduct method
     it('should return a new product', async () => {
@@ -22,6 +29,7 @@ describe('ProductStore', () => {
             category: 'test',
         });
         expect(product).toBeInstanceOf(Object);
+        client.query(`DELETE FROM products`);
     });
     // test getProductsByCategory method
     it('should return an array of products', async () => {

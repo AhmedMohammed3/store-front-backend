@@ -14,6 +14,7 @@ export class ProductStore {
             const conn = await client.connect();
             const sql = 'SELECT * FROM products';
             const result: QueryResult<Product> = await conn.query(sql);
+            conn.release();
             return result.rows;
         } catch (err) {
             throw new Error(`Can not get products: ${err}`);
@@ -24,6 +25,7 @@ export class ProductStore {
             const conn = await client.connect();
             const sql = 'SELECT * FROM products WHERE id = $1';
             const result: QueryResult<Product> = await conn.query(sql, [id]);
+            conn.release();
             return result.rows[0];
         } catch (err) {
             throw new Error(`Can not get product: ${err}`);
@@ -39,6 +41,7 @@ export class ProductStore {
                 product.price,
                 product.category,
             ]);
+            conn.release();
             return result.rows[0];
         } catch (err) {
             throw new Error(`Can not create product: ${err}`);
@@ -53,6 +56,7 @@ export class ProductStore {
             const result: QueryResult<Product> = await conn.query(sql, [
                 `%${category}%`,
             ]);
+            conn.release();
             return result.rows;
         } catch (err) {
             throw new Error(`Can not get products by category: ${err}`);

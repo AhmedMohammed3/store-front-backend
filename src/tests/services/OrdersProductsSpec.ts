@@ -1,132 +1,88 @@
+import client from '../../database';
 import {
     OrderWithProducts,
     OrdersProductsStore,
 } from '../../services/OrdersProducts';
 
-import client from '../../database';
-
+// test OrdersProductsStore
 describe('OrdersProductsStore', () => {
-    let store: OrdersProductsStore;
-
-    beforeEach(() => {
-        store = new OrdersProductsStore();
+    let orderId = '';
+    let userId = '';
+    let productId = '';
+    beforeEach(async () => {
+        let result = await client.query(
+            `INSERT INTO users (firstname,lastname,password) VALUES ('fname','lname','pswd') RETURNING *`,
+        );
+        userId = result.rows[0].id;
+        result = await client.query(
+            `INSERT INTO orders (user_id,order_status) VALUES (${userId},'active') RETURNING *`,
+        );
+        orderId = result.rows[0].id;
+        result = await client.query(
+            `INSERT INTO products (name,price,category) VALUES ('product1',10,'category1') RETURNING *`,
+        );
+        productId = result.rows[0].id;
+    });
+    afterEach(async () => {
+        await client.query(`DELETE FROM orders_products`);
+        await client.query(`DELETE FROM orders`);
+        await client.query(`DELETE FROM users`);
+        await client.query(`DELETE FROM products`);
     });
 
-    it('should create order', async () => {
-        const orderId = 1;
-        const products = [
-            { productId: 1, quantity: 1 },
-            { productId: 2, quantity: 2 },
-        ];
-
-        await store.createOrder(orderId, products);
-
-        const { rows } = await client.query(
-            `SELECT * FROM orders_products WHERE order_id = ${orderId}`,
+    // test createOrder method
+    it('should return a new order', async () => {
+        const store = new OrdersProductsStore();
+        await store.createOrder(Number(orderId), [
+            { productId: Number(productId), quantity: 1 },
+        ]);
+        // check if order was created
+        const orders: OrderWithProducts[] = await store.getOrders(
+            Number(userId),
+            true,
         );
-
-        expect(rows).toHaveSize(2);
+        expect(orders.length).toBe(1);
     });
 
-    it('should get orders', async () => {
-        const userId = 1;
-        const activeOrders = true;
-
-        const orders: OrderWithProducts[] = [
-            {
-                orderId: 1,
-                userId: 1,
-                orderStatus: 'active',
-                products: [
-                    {
-                        productName: 'product 1',
-                        productPrice: 1,
-                        productQuantity: 1,
-                    },
-                ],
-            },
-            {
-                orderId: 2,
-                userId: 1,
-                orderStatus: 'completed',
-                products: [
-                    {
-                        productName: 'product 1',
-                        productPrice: 1,
-                        productQuantity: 1,
-                    },
-                ],
-            },
-        ];
-
-        await client.query(
-            `INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 1, 1), (2, 1, 1)`,
+    // test getOrders method
+    it('should return an array of orders', async () => {
+        const store = new OrdersProductsStore();
+        const orders: OrderWithProducts[] = await store.getOrders(
+            Number(userId),
+            true,
         );
-
-        const result = await store.getOrders(userId, activeOrders);
-
-        expect(result).toEqual(orders);
+        expect(orders).toBeInstanceOf(Array);
     });
 
-    it('should get current order', async () => {
-        const userId = 1;
-
-        const currentOrder: OrderWithProducts = {
-            orderId: 1,
-            userId,
-            orderStatus: 'active',
-            products: [
-                {
-                    productName: 'product 1',
-                    productPrice: 1,
-                    productQuantity: 1,
-                },
-            ],
-        };
-
-        await client.query(
-            `INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 1, 1)`,
+    // test getCurrentOrder method
+    it('should return an order', async () => {
+        const store = new OrdersProductsStore();
+        await store.createOrder(Number(orderId), [
+            { productId: Number(productId), quantity: 1 },
+        ]);
+        const order: OrderWithProducts = await store.getCurrentOrder(
+            Number(userId),
         );
-
-        const result = await store.getCurrentOrder(userId);
-
-        expect(result).toEqual(currentOrder);
+        expect(order).toBeInstanceOf(Object);
     });
 
-    it('should get completed orders', async () => {
-        const userId = 1;
-
-        const completedOrders: OrderWithProducts[] = [
-            {
-                orderId: 1,
-                userId,
-                orderStatus: 'completed',
-                products: [
-                    {
-                        productName: 'product 1',
-                        productPrice: 1,
-                        productQuantity: 1,
-                    },
-                ],
-            },
-        ];
-
-        await client.query(
-            `INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 1, 1), (2, 1, 1)`,
+    // test getCompletedOrders method
+    it('should return an array of orders', async () => {
+        const store = new OrdersProductsStore();
+        const orders: OrderWithProducts[] = await store.getCompletedOrders(
+            Number(userId),
         );
-
-        const result = await store.getCompletedOrders(userId);
-
-        expect(result).toEqual(completedOrders);
+        expect(orders).toBeInstanceOf(Array);
     });
 
-    it('should get featured products', async () => {
-        await client.query(
-            `INSERT INTO orders_products (order_id, product_id, quantity) VALUES (1, 1, 1), (2, 1, 1)`,
-        );
-
-        const result = await store.getFeaturedProducts();
-
-        expect(result).toHaveSize(1);
+    // test getFeaturedProducts method
+    it('should return an array of products', async () => {
+        const store = new OrdersProductsStore();
+        const products: {
+            productId: number;
+            productName: string;
+            productPrice: number;
+        }[] = await store.getFeaturedProducts();
+        expect(products).toBeInstanceOf(Array);
     });
 });

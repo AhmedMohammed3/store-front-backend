@@ -27,6 +27,7 @@ export class OrdersProductsStore {
                     product.quantity,
                 ]);
             }
+            conn.release();
         } catch (err) {
             throw new Error(`Can not create order: ${err}`);
         }
@@ -43,6 +44,7 @@ export class OrdersProductsStore {
                 userId,
                 activeOrders ? 'active' : 'completed',
             ]);
+            conn.release();
             const orders = result.rows;
             const newOrders: OrderWithProducts[] = [];
             for (const order of orders) {
@@ -97,6 +99,7 @@ export class OrdersProductsStore {
             const sql =
                 'SELECT products.id as productId, products.name as productName, products.price as productPrice, SUM(orders_products.quantity) as productCount FROM orders_products INNER JOIN products ON products.id = orders_products.product_id GROUP BY products.id ORDER BY productCount DESC LIMIT 5';
             const result = await conn.query(sql);
+            conn.release();
             return result.rows.map((row) => ({
                 productId: row.productid,
                 productName: row.productname,

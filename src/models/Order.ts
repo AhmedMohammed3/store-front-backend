@@ -17,6 +17,7 @@ export class OrderStore {
                 userId,
                 'active',
             ]);
+            conn.release();
             return result.rows[0];
         } catch (err) {
             throw new Error(`Can not create order: ${err}`);
@@ -28,6 +29,7 @@ export class OrderStore {
             const sql =
                 'UPDATE orders SET order_status = $1 WHERE id = $2 RETURNING *';
             await conn.query(sql, ['completed', orderId]);
+            conn.release();
         } catch (err) {
             throw new Error(`Can not mark order as completed: ${err}`);
         }

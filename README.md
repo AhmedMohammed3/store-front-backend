@@ -60,8 +60,9 @@ This project is an API that provide all the functionalities needed for an online
     7. `JWT_SECRET`
     8. `BCRYPT_PEPPER`
     9. `BCRYPT_SALT`
+    10. `ENV=dev`
 
-3. Run the following set of commands to create a database called `store_front`<br/>
+3. Run the following set of commands to create your databases<br/>
 
     1. `psql -U {POSTGRES_USER}`
     2. `CREATE DATABASE store_front;`
@@ -74,7 +75,9 @@ This project is an API that provide all the functionalities needed for an online
     1. `psql -U {POSTGRES_USER} -d store_front -a -f ./seeds/seed.sql`
 
 ### NOTES
+
 NOTE That DB is running on the default port 5432 so you don't need to add it to the .env file.
+
 ## How To Run The Server
 
 1. Run the following command to start the server:<br/>

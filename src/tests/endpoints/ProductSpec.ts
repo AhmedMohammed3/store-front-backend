@@ -1,38 +1,75 @@
 import supertest from 'supertest';
 import app from '../../server';
+import client from '../../database';
 
-describe('Products', () => {
-    let server: supertest.SuperTest<supertest.Test>;
-
-    beforeEach(() => {
-        server = supertest.agent(app);
-    });
-
-    it('should return an array of products (return 200)', async () => {
-        const response = await server.get('/products');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
-    });
-
-    it('should return a single product (return 200)', async () => {
-        const response = await server.get('/products/1');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Object);
-    });
-
-    it('should create a product (return 201)', async () => {
-        const response = await server.post('/products').send({
-            name: 'test',
-            price: 1,
-            category: 'test',
+// test Product endpoints
+describe('Product', () => {
+    let token = '';
+    let userId = '';
+    let products: { productId: number; quantity: number }[] = [];
+    beforeAll(async () => {
+        let response = await supertest(app).post('/users').send({
+            firstname: 'fname',
+            lastname: 'lname',
+            password: 'pswd',
         });
-        expect(response.status).toBe(201);
-        expect(response.body).toBeInstanceOf(Object);
-    });
+        token = response.body.token;
+        userId = response.body.newUser.id;
 
-    it('should get products by category (return 200)', async () => {
-        const response = await server.get('/products/category/test');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
+        response = await supertest(app)
+            .post('/products')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: 'product',
+                price: 10,
+                category: 'category',
+            });
+        products = [
+            {
+                productId: response.body.newProduct.id,
+                quantity: 1,
+            },
+        ];
+    });
+    afterAll(async () => {
+        await client.query(`DELETE from orders_products`);
+        await client.query(`DELETE FROM orders`);
+        await client.query(`DELETE FROM users`);
+        await client.query(`DELETE from products`);
+    });
+    describe('getProducts', () => {
+        it('should return all products', async () => {
+            const response = await supertest(app).get('/products');
+            expect(response.status).toBe(200);
+        });
+    });
+    describe('getProduct', () => {
+        it('should return a specifc product', async () => {
+            const response = await supertest(app).get(
+                `/products/${products[0].productId}`,
+            );
+            expect(response.status).toBe(200);
+        });
+    });
+    describe('getProductsByCategory', () => {
+        it('should return category products', async () => {
+            const response = await supertest(app).get(
+                `/products/category/category}`,
+            );
+            expect(response.status).toBe(200);
+        });
+    });
+    describe('createProduct', () => {
+        it('should create a new product', async () => {
+            const response = await supertest(app)
+                .post('/products')
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    name: 'product',
+                    price: 10,
+                    category: 'category',
+                });
+            expect(response.status).toBe(201);
+        });
     });
 });

@@ -1,33 +1,37 @@
 import supertest from 'supertest';
 import app from '../../server';
+import client from '../../database';
 
-// users
-describe('Users', () => {
-    let server: supertest.SuperTest<supertest.Test>;
-
-    beforeEach(() => {
-        server = supertest.agent(app);
-    });
-
-    it('should return an array of users (return 200)', async () => {
-        const response = await server.get('/users');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
-    });
-
-    it('should return a single user (return 200)', async () => {
-        const response = await server.get('/users/1');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Object);
-    });
-
-    it('should create a user (return 201)', async () => {
-        const response = await server.post('/users').send({
-            firstname: 'test',
-            lastname: 'test',
-            pass: 'test',
+// test User endpoints
+describe('User', () => {
+    let token = '';
+    let userId = '';
+    beforeAll(async () => {
+        let response = await supertest(app).post('/users').send({
+            firstname: 'fname',
+            lastname: 'lname',
+            password: 'pswd',
         });
-        expect(response.status).toBe(201);
-        expect(response.body).toBeInstanceOf(Object);
+        token = response.body.token;
+        userId = response.body.newUser.id;
+    });
+    afterAll(async () => {
+        await client.query(`DELETE FROM users`);
+    });
+    describe('getUser', () => {
+        it('should return a specifc user', async () => {
+            const response = await supertest(app)
+                .get(`/users/${userId}`)
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
+        });
+    });
+    describe('getUsers', () => {
+        it('should return all users', async () => {
+            const response = await supertest(app)
+                .get('/users')
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
+        });
     });
 });

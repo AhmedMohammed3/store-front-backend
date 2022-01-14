@@ -1,42 +1,49 @@
 import supertest from 'supertest';
 import app from '../../server';
+import client from '../../database';
 
-describe('Orders', () => {
-    let server: supertest.SuperTest<supertest.Test>;
-
-    beforeEach(() => {
-        server = supertest.agent(app);
-    });
-
-    it('should return an array of orders (return 200)', async () => {
-        const response = await server.get('/orders');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Array);
-    });
-
-    it('should return a single order (return 200)', async () => {
-        const response = await server.get('/orders/1');
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Object);
-    });
-
-    it('should create an order (return 201)', async () => {
-        const response = await server.post('/orders').send({
-            userId: 1,
-            products: [
-                { productId: 1, quantity: 1 },
-                { productId: 2, quantity: 2 },
-            ],
+// test ordersProducts endpoints
+describe('OrdersProducts', () => {
+    let token = '';
+    let userId = '';
+    beforeAll(async () => {
+        let response = await supertest(app).post('/users').send({
+            firstname: 'fname',
+            lastname: 'lname',
+            password: 'pswd',
         });
-        expect(response.status).toBe(201);
-        expect(response.body).toBeInstanceOf(Object);
-    });
+        token = response.body.token;
+        userId = response.body.newUser.id;
 
-    it('should mark an order as completed (return 200)', async () => {
-        const response = await server.put('/orders/1').send({
-            orderStatus: 'completed',
+        response = await supertest(app)
+            .post('/products')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: 'product',
+                price: 10,
+                category: 'category',
+            });
+    });
+    afterAll(async () => {
+        await client.query(`DELETE from orders_products`);
+        await client.query(`DELETE FROM orders`);
+        await client.query(`DELETE FROM users`);
+        await client.query(`DELETE from products`);
+    });
+    describe('getCurrentOrder', () => {
+        it('should return current order', async () => {
+            const response = await supertest(app)
+                .get(`/orders/current/${userId}`)
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
         });
-        expect(response.status).toBe(200);
-        expect(response.body).toBeInstanceOf(Object);
+    });
+    describe('getCompletedOrders', () => {
+        it('should return a list of completed orders', async () => {
+            const response = await supertest(app)
+                .get(`/orders/completed/${userId}`)
+                .set('Authorization', `Bearer ${token}`);
+            expect(response.status).toBe(200);
+        });
     });
 });

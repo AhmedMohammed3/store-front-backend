@@ -10,7 +10,12 @@ describe('UserStore', () => {
     // test showUser method
     it('should return a user', async () => {
         const store = new UserStore();
-        const user: User = await store.showUser(1);
+        let user: User = await store.createUser({
+            firstname: 'test',
+            lastname: 'test',
+            pass: 'test',
+        });
+        user = await store.showUser(Number(user.id));
         expect(user).toBeInstanceOf(Object);
     });
     // test createUser method

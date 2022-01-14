@@ -1,4 +1,4 @@
-import { OrderWithProducts } from './../services/OrdersProducts';
+import { OrderWithProducts } from '../services/OrdersProducts';
 import express, { Request, Response } from 'express';
 import { OrdersProductsStore } from '../services/OrdersProducts';
 import { verifyToken } from '../middlewares/token';

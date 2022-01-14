@@ -15,6 +15,7 @@ export class UserStore {
             const conn = await client.connect();
             const sql = 'SELECT * FROM users';
             const result: QueryResult<User> = await conn.query(sql);
+            conn.release();
             return result.rows;
         } catch (err) {
             throw new Error(`Can not get users: ${err}`);
@@ -25,6 +26,7 @@ export class UserStore {
             const conn = await client.connect();
             const sql = 'SELECT * FROM users WHERE id = $1';
             const result: QueryResult<User> = await conn.query(sql, [id]);
+            conn.release();
             return result.rows[0];
         } catch (err) {
             throw new Error(`Can not get user: ${err}`);
@@ -43,6 +45,7 @@ export class UserStore {
                     Number(process.env.BCRYPT_SALT),
                 ),
             ]);
+            conn.release();
             return result.rows[0];
         } catch (err) {
             throw new Error(`Can not create user: ${err}`);
